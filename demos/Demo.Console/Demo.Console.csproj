@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PrismArch Condition="'$(Platform)' == 'x86' Or '$(RuntimeIdentifier)' == 'win-x86'">x86</PrismArch>
+    <PrismArch Condition="'$(PrismArch)' == ''">x64</PrismArch>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Prism\Prism.csproj" />
+    <Content Include="..\..\prism_$(PrismArch).dll" Link="prism.dll" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

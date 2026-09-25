@@ -1,0 +1,4 @@
+This project is licensed under the Mozilla Public License version 2.0. Full details are available in the LICENSE file.
+
+This project is a .NET binding for Prism (Platform-agnostic Reader Interface for Speech and Messages).
+The original Prism C library is licensed under MPL-2.0. See https://github.com/ethindp/prism for details.

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Prism.props" />
+
+  <Target Name="PrismCopyNativeLibs" BeforeTargets="Build">
+    <ItemGroup>
+      <None Include="$(MSBuildThisFileDirectory)..\lib\**\*.dll">
+        <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <Visible>false</Visible>
+      </None>
+      <None Include="$(MSBuildThisFileDirectory)..\lib\**\*.so">
+        <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <Visible>false</Visible>
+      </None>
+      <None Include="$(MSBuildThisFileDirectory)..\lib\**\*.dylib">
+        <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <Visible>false</Visible>
+      </None>
+    </ItemGroup>
+  </Target>
+</Project>

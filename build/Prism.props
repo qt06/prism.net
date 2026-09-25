@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PrismPackageId>Prism.Net</PrismPackageId>
+    <PrismPackageVersion>0.18.2</PrismPackageVersion>
+    <PrismLibName>prism</PrismLibName>
+    <PrismOutputName>$(PrismLibName)</PrismOutputName>
+    <PrismNativeOutputDir>$(MSBuildThisFileDirectory)..\lib\$(Platform)\$(Configuration)</PrismNativeOutputDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Platform)' == 'x64'">
+    <PrismRuntimeIdentifier>win-x64</PrismRuntimeIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' == 'x86'">
+    <PrismRuntimeIdentifier>win-x86</PrismRuntimeIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' == 'ARM64'">
+    <PrismRuntimeIdentifier>win-arm64</PrismRuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PrismNativeLib Include="$(MSBuildThisFileDirectory)..\lib\**\*.*">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </PrismNativeLib>
+  </ItemGroup>
+</Project>
