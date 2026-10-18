@@ -8,7 +8,7 @@ screen-reader abstraction libraries (SpeechCore, UniversalSpeech, SRAL, Tolk,
 ## Requirements
 
 - .NET Framework 4.8+, .NET Standard 2.0+, or .NET 10+
-- Native `prism` library (v0.18.2+) available in the application's working
+- Native `prism` library (v0.18.3+) available in the application's working
   directory or `PATH` (for example `prism.dll` on Windows)
 
 The native library is not part of the managed package. Obtain it from the

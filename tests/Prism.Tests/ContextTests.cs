@@ -72,7 +72,8 @@ namespace Prism.Tests
             Assert.Equal(0x9120D89908785C13UL, (ulong)BackendId.WINDOW_EYES);
             Assert.Equal(0xED4760890B55C2F2UL, (ulong)BackendId.SENSE_READER);
             Assert.Equal(0x478B44F14AD3D89CUL, (ulong)BackendId.SPIEL);
-            Assert.Equal(21, Enum.GetValues(typeof(BackendId)).Length);
+            Assert.Equal(0xC3012087817A1CEEUL, (ulong)BackendId.XBOX_SPEECH);
+            Assert.Equal(22, Enum.GetValues(typeof(BackendId)).Length);
         }
     }
 
