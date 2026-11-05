@@ -42,6 +42,8 @@ namespace Prism.Tests
             Assert.Equal(1UL << 26, (ulong)BackendFeatures.PerformsSilenceTrimmingOnSpeakToMemory);
             Assert.Equal(1UL << 27, (ulong)BackendFeatures.SupportsSpeakSsml);
             Assert.Equal(1UL << 28, (ulong)BackendFeatures.SupportsSpeakToMemorySsml);
+            Assert.Equal(1UL << 56, (ulong)BackendFeatures.IsScreenReader);
+            Assert.Equal(1UL << 57, (ulong)BackendFeatures.IsSpeechEngine);
             Assert.Equal(1UL << 63, (ulong)BackendFeatures.FeatureMaxBit);
         }
     }
@@ -72,7 +74,7 @@ namespace Prism.Tests
             Assert.Equal(0x9120D89908785C13UL, (ulong)BackendId.WINDOW_EYES);
             Assert.Equal(0xED4760890B55C2F2UL, (ulong)BackendId.SENSE_READER);
             Assert.Equal(0x478B44F14AD3D89CUL, (ulong)BackendId.SPIEL);
-            Assert.Equal(0xC3012087817A1CEEUL, (ulong)BackendId.XBOX_SPEECH);
+            Assert.Equal(0xD39D872349416B11UL, (ulong)BackendId.GDK_SPEECH);
             Assert.Equal(22, Enum.GetValues(typeof(BackendId)).Length);
         }
     }

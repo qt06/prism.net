@@ -35,6 +35,8 @@ namespace Prism.Primitives
         PerformsSilenceTrimmingOnSpeakToMemory = 1UL << 26,
         SupportsSpeakSsml = 1UL << 27,
         SupportsSpeakToMemorySsml = 1UL << 28,
+        IsScreenReader = 1UL << 56,
+        IsSpeechEngine = 1UL << 57,
         FeatureMaxBit = 1UL << 63
     }
 }
