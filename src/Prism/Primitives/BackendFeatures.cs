@@ -37,6 +37,7 @@ namespace Prism.Primitives
         SupportsSpeakToMemorySsml = 1UL << 28,
         IsScreenReader = 1UL << 56,
         IsSpeechEngine = 1UL << 57,
+        RequiresExplicitSelection = 1UL << 58,
         FeatureMaxBit = 1UL << 63
     }
 }

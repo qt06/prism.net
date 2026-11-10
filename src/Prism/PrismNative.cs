@@ -61,6 +61,8 @@ namespace Prism.Native
         public const ulong PRISM_BACKEND_SENSE_READER = 0xED4760890B55C2F2;
         public const ulong PRISM_BACKEND_SPIEL = 0x478B44F14AD3D89C;
         public const ulong PRISM_BACKEND_GDK_SPEECH = 0xD39D872349416B11;
+        public const ulong PRISM_BACKEND_CLIPBOARD = 0x7056908DE8F9F991;
+        public const ulong PRISM_BACKEND_NO_SPEECH = 0xC2C0EAB0BF97A5F0;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void AvailabilityCallbackDelegate(

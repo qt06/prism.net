@@ -44,6 +44,7 @@ namespace Prism.Tests
             Assert.Equal(1UL << 28, (ulong)BackendFeatures.SupportsSpeakToMemorySsml);
             Assert.Equal(1UL << 56, (ulong)BackendFeatures.IsScreenReader);
             Assert.Equal(1UL << 57, (ulong)BackendFeatures.IsSpeechEngine);
+            Assert.Equal(1UL << 58, (ulong)BackendFeatures.RequiresExplicitSelection);
             Assert.Equal(1UL << 63, (ulong)BackendFeatures.FeatureMaxBit);
         }
     }
@@ -75,7 +76,9 @@ namespace Prism.Tests
             Assert.Equal(0xED4760890B55C2F2UL, (ulong)BackendId.SENSE_READER);
             Assert.Equal(0x478B44F14AD3D89CUL, (ulong)BackendId.SPIEL);
             Assert.Equal(0xD39D872349416B11UL, (ulong)BackendId.GDK_SPEECH);
-            Assert.Equal(22, Enum.GetValues(typeof(BackendId)).Length);
+            Assert.Equal(0x7056908DE8F9F991UL, (ulong)BackendId.CLIPBOARD);
+            Assert.Equal(0xC2C0EAB0BF97A5F0UL, (ulong)BackendId.NO_SPEECH);
+            Assert.Equal(24, Enum.GetValues(typeof(BackendId)).Length);
         }
     }
 
