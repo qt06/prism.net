@@ -48,7 +48,13 @@ Run from the project directory:
 ```text
 dotnet build --no-restore -c Release
 dotnet test  --no-restore -c Release
+dotnet test  --no-restore -c Release -p:Platform=x86   # Windows 32-bit ABI leg
 ```
+
+The default Any CPU test leg runs against `prism_x64.dll`. The explicit x86
+configuration (`Release|x86`, or `-p:Platform=x86`) selects `prism_x86.dll` and
+forces a 32-bit test host so pointer sizes, struct returns, and reverse P/Invoke
+match the x86 ABI.
 
 Some tests require the native Prism library and are skipped when it is not
 available. Do not treat skipped native integration tests as full coverage.

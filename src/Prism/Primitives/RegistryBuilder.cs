@@ -18,6 +18,7 @@ namespace Prism.Primitives
     {
         private IntPtr _builder;
         private bool _disposed;
+        private bool _frozen;
         private readonly List<Delegate> _rootedDelegates = new List<Delegate>();
 
         public RegistryBuilder()
@@ -35,6 +36,7 @@ namespace Prism.Primitives
             {
                 PrismNativeLib.prism_registry_builder_free(_builder);
                 _builder = IntPtr.Zero;
+                _rootedDelegates.Clear();
                 _disposed = true;
             }
         }
@@ -44,6 +46,14 @@ namespace Prism.Primitives
             if (_disposed)
             {
                 throw new PrismInvalidOperationException("RegistryBuilder has been disposed");
+            }
+        }
+
+        private void ThrowIfSpent()
+        {
+            if (_frozen)
+            {
+                throw new PrismInvalidOperationException("RegistryBuilder has already been frozen");
             }
         }
 
@@ -58,6 +68,7 @@ namespace Prism.Primitives
         public BackendId AddBackend(string name, int priority, BackendFeatures features, BackendVTable vtable, IntPtr userdata = default)
         {
             ThrowIfDisposed();
+            ThrowIfSpent();
             if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentException("Backend name must be a non-empty string", nameof(name));
@@ -72,7 +83,8 @@ namespace Prism.Primitives
             }
 
             var namePtr = PrismNativeLib.StringToUtf8Ptr(name);
-            var native = vtable.ToNative();
+            var thunks = new List<Delegate>();
+            var native = vtable.ToNative(thunks);
             var featureBits = (ulong)features;
             if (!IsConsistent(featureBits, native))
             {
@@ -80,13 +92,14 @@ namespace Prism.Primitives
                     "Feature declaration mismatch: every declared feature must have a non-null vtable member, " +
                     "and every non-null vtable member must have its feature declared.", nameof(features));
             }
-            // Root every thunk delegate so the function pointers remain valid.
-            _rootedDelegates.AddRange(CollectDelegates(vtable));
             try
             {
                 var result = PrismNativeLib.prism_registry_builder_add_backend(
                     _builder, namePtr, priority, (ulong)features, ref native, userdata, IntPtr.Zero, out var outId);
                 ThrowIfError(result);
+                // Root the thunks only after the registration succeeds; a
+                // failed registration must not retain the closures.
+                _rootedDelegates.AddRange(thunks);
                 return (BackendId)outId;
             }
             finally
@@ -102,6 +115,7 @@ namespace Prism.Primitives
         public int AddLibrary(string path, int priorityOverride = -1)
         {
             ThrowIfDisposed();
+            ThrowIfSpent();
             if (string.IsNullOrEmpty(path))
             {
                 throw new ArgumentException("Plugin path must be a non-empty string", nameof(path));
@@ -128,11 +142,13 @@ namespace Prism.Primitives
         public PrismRegistry Freeze()
         {
             ThrowIfDisposed();
+            ThrowIfSpent();
             var registry = PrismNativeLib.prism_registry_freeze(_builder);
             if (registry == IntPtr.Zero)
             {
                 throw new PrismMemoryException("Failed to freeze Prism registry");
             }
+            _frozen = true;
             var rooted = new List<Delegate>(_rootedDelegates);
             _rootedDelegates.Clear();
             return new PrismRegistry(registry, rooted);
@@ -144,23 +160,7 @@ namespace Prism.Primitives
             {
                 return;
             }
-            switch ((PrismError)error)
-            {
-                case PrismError.InvalidUtf8:
-                    throw new PrismInvalidUtf8Exception();
-                case PrismError.InvalidParam:
-                    throw new PrismInvalidParamException();
-                case PrismError.InvalidOperation:
-                    throw new PrismInvalidOperationException();
-                case PrismError.LibraryLoadFailed:
-                    throw new PrismLibraryLoadFailedException();
-                case PrismError.LibraryInvalid:
-                    throw new PrismLibraryInvalidException();
-                case PrismError.IncompatibleAbi:
-                    throw new PrismIncompatibleAbiException();
-                default:
-                    throw new PrismUnknownException($"Prism error: {(PrismError)error}");
-            }
+            throw Prism.Backend.CreateException(error);
         }
 
         private static bool IsConsistent(ulong features, PrismNativeLib.PrismBackendVTableInternal vtable)
@@ -195,37 +195,6 @@ namespace Prism.Primitives
             var present = member != IntPtr.Zero;
             var declared = (features & (ulong)feature) != 0;
             return present == declared;
-        }
-
-        private static IEnumerable<Delegate> CollectDelegates(BackendVTable vtable)
-        {
-            if (vtable.Create != null) yield return vtable.Create;
-            if (vtable.Destroy != null) yield return vtable.Destroy;
-            if (vtable.IsSupported != null) yield return vtable.IsSupported;
-            if (vtable.Initialize != null) yield return vtable.Initialize;
-            if (vtable.Speak != null) yield return vtable.Speak;
-            if (vtable.SpeakToMemory != null) yield return vtable.SpeakToMemory;
-            if (vtable.Braille != null) yield return vtable.Braille;
-            if (vtable.Output != null) yield return vtable.Output;
-            if (vtable.Stop != null) yield return vtable.Stop;
-            if (vtable.Pause != null) yield return vtable.Pause;
-            if (vtable.Resume != null) yield return vtable.Resume;
-            if (vtable.IsSpeaking != null) yield return vtable.IsSpeaking;
-            if (vtable.SetVolume != null) yield return vtable.SetVolume;
-            if (vtable.GetVolume != null) yield return vtable.GetVolume;
-            if (vtable.SetRate != null) yield return vtable.SetRate;
-            if (vtable.GetRate != null) yield return vtable.GetRate;
-            if (vtable.SetPitch != null) yield return vtable.SetPitch;
-            if (vtable.GetPitch != null) yield return vtable.GetPitch;
-            if (vtable.RefreshVoices != null) yield return vtable.RefreshVoices;
-            if (vtable.CountVoices != null) yield return vtable.CountVoices;
-            if (vtable.GetVoiceName != null) yield return vtable.GetVoiceName;
-            if (vtable.GetVoiceLanguage != null) yield return vtable.GetVoiceLanguage;
-            if (vtable.SetVoice != null) yield return vtable.SetVoice;
-            if (vtable.GetVoice != null) yield return vtable.GetVoice;
-            if (vtable.GetChannels != null) yield return vtable.GetChannels;
-            if (vtable.GetSampleRate != null) yield return vtable.GetSampleRate;
-            if (vtable.GetBitDepth != null) yield return vtable.GetBitDepth;
         }
     }
 }

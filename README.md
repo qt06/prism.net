@@ -82,11 +82,17 @@ Prism.Logger.SetHandler((level, source, message) => Console.WriteLine($"[{level}
 ```text
 dotnet build -c Release
 dotnet test  -c Release      # net10.0 and, on Windows, net48
+dotnet test  -c Release -p:Platform=x86   # 32-bit ABI leg on Windows
 ```
 
+Use the solution configuration `Release|x86` (or `-p:Platform=x86`) to run the
+test suite against `prism_x86.dll` in a 32-bit test host. This exercises
+pointer-size, struct-return, and reverse P/Invoke behavior that the default
+Any CPU (x64) leg cannot cover.
+
 The prebuilt native library is expected at `prism_x64.dll` (or `prism_x86.dll`)
-in the repository root; it is copied next to each test and sample binary on
-build.
+in the repository root; the matching file is copied next to each test and
+sample binary on build.
 
 Samples under `demos/`:
 

@@ -15,6 +15,9 @@
   <PropertyGroup>
     <PrismArch Condition="'$(Platform)' == 'x86' Or '$(RuntimeIdentifier)' == 'win-x86'">x86</PrismArch>
     <PrismArch Condition="'$(PrismArch)' == ''">x64</PrismArch>
+    <!-- Select the matching native binary and force a 32-bit test host so the
+         x86 ABI (pointer sizes, struct returns, reverse P/Invoke) is exercised. -->
+    <PlatformTarget Condition="'$(PrismArch)' == 'x86'">x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
